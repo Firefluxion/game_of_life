@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <windows.h>
 #define NEIGHBORCOUNT 8
 enum cellState
 {
@@ -39,6 +40,8 @@ struct cell* get_neighbors(struct field* field, struct pos position);
 struct cell simulate_cell(struct field* field, struct cell cell);
 struct cell* new_cell_list(struct field* field);
 void simulate_field(struct field* field);
+int set_cursor(int x, int y);
+void print_frame(int, int);
 void clear();
 
 const int NEIGHBOROFFSETS[2][NEIGHBORCOUNT] = {
@@ -76,6 +79,8 @@ void simulate_field(struct field* field)
 
 void print_field(struct field* field)
 {
+    print_frame(field->width + 2, field->height + 1);
+    set_cursor(1, 1);
     int x = 0, y = 0;
     for (y = 0; y < field->height; y++)
     {
@@ -95,15 +100,16 @@ void print_field(struct field* field)
                 break;
             }
         }
-    printf("\n");
+    set_cursor(1, y + 1);
     }
+    set_cursor(0, field->height + 1);
 };
 
 struct cell get_cell(struct field* field, int x, int y)
 {
     struct cell c;
     int i = 0;
-    for (i; i < field->height * field->width; i++)
+    for (i = 0; i < field->height * field->width; i++)
     {
         c = field->cells[i];
         if (c.position.x == x && c.position.y == y)
@@ -111,7 +117,7 @@ struct cell get_cell(struct field* field, int x, int y)
             return c;
         }
     }
-    return;
+    return c;
 };
 
 struct cell simulate_cell(struct field* field, struct cell cell)
@@ -193,6 +199,32 @@ int wrap_around(int n, int min, int max)
     return n;
 }
 
+void print_frame(int width, int height)
+{
+    int i = 0, j = 0;
+    for (i = 0; i < height; i++)
+    {
+        for (j = 0; j < width; j++)
+        {
+            if (i == 0 && j == 0)
+                printf("\xC9");
+            else if (i == 0 && j == width-1)
+                printf("\xBB");
+            else if (i == height-1 && j == 0)
+                printf("\xC8");
+            else if (i == height-1 && j == width-1)
+                printf("\xBC");
+            else if (i == 0 || i == height-1)
+                printf("\xCD");
+            else if (j == 0 || j == width-1)
+                printf("\xBA");
+            else
+                printf(" ");
+        }
+        printf("\n");
+    }
+}
+
 struct field* newField(int width, int height, char visual)
 {
     srand(time(0));
@@ -216,13 +248,21 @@ struct field* newField(int width, int height, char visual)
         }
     }
     return f;
-    //return (struct pos*)malloc(sizeof(struct pos) * size);
 };
 
 struct cell* new_cell_list(struct field* field)
 {
     return (struct cell*)malloc(sizeof(struct cell) * field->width * field->height);
 };
+
+int set_cursor(int x, int y)
+{
+    COORD koordinaten;
+    koordinaten.X= x;
+    koordinaten.Y= y;
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), koordinaten);
+    return 0;
+}
 
 void clear(){
     #if defined(__linux__) || defined(__unix__) || defined(__APPLE__)
