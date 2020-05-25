@@ -73,20 +73,21 @@ int main()
 
     struct field* f = new_field(w, h, c);
     c = 0;
+    clear();
 
     do
     {
-        clear();
         print_field(f);
         print_info(f, automatic);
         simulate_field(f);
 
         if (automatic)
         {
-            sleep(1.0f / simulationsPerSecond);
+            usleep(1000000 / simulationsPerSecond);
             if (kbhit())
             {
                 automatic = 0;
+                clear();
             }
         }
         else
