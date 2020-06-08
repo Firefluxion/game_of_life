@@ -15,3 +15,5 @@
 
 - Zellen manuel hinzufügen/entfernen
 - Backtracking der letzen X(einstellbar) Iterationen
+
+-Zellenlogik auf 2d Array umstellen
