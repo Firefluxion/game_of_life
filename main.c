@@ -33,18 +33,22 @@ struct field
     int width;
 
     struct cell* cells;
+    int iteration;
 };
 
 int wrap_around(int n, int min, int max);
 struct pos* new_pos(int, int);
 struct field* new_field(int, int, char);
 void print_field(struct field*);
-void print_info(struct field* field, int automatic);
+void print_info(struct field* field, int automatic, double iterations, int currentIteration, int finished);
 struct cell get_cell(struct field* field, int x, int y);
 struct pos* get_neighbor_positions(struct field* field, struct pos position);
 struct cell* get_neighbors(struct field* field, struct pos position);
 struct cell simulate_cell(struct field* field, struct cell cell);
 struct cell* new_cell_list(struct field* field);
+struct field* copy_field(struct field* origin);
+int get_field_cell_count(struct field* field);
+int compare_fields(struct field* a, struct field* b);
 void simulate_field(struct field* field);
 int set_cursor(int x, int y);
 void print_frame(int, int);
@@ -59,9 +63,10 @@ const int NEIGHBOROFFSETS[2][NEIGHBORCOUNT] = {
 
 int main()
 {
-    float simulationsPerSecond = 3.0f;
-    int automatic = 1;
+    double simulationsPerSecond = 3.0;
+    int automatic = 1, finished = 0;
     char c;
+    struct field* lastField;
 
     printf("Please enter the field's width: ");
     int w = safe_number_input(1, (float)INT_MAX);
@@ -77,8 +82,7 @@ int main()
 
     do
     {
-        print_field(f);
-        print_info(f, automatic);
+        lastField = copy_field(f);
         simulate_field(f);
 
         if (automatic)
@@ -88,20 +92,39 @@ int main()
             {
                 automatic = 0;
                 clear();
+                fflush(stdin);
             }
         }
         else
         {
             c = getchar();
+            if (c == 'a')
+            {
+                automatic = 1;
+                c = ' ';
+                fflush(stdin);
+            }
         }
+
+        if (compare_fields(lastField, f))
+        {
+            finished = 1;
+            clear();
+        }
+
+        print_field(f);
+        print_info(f, automatic, simulationsPerSecond, f->iteration, finished);
     }
-    while (c != 'x');
+    while (c != 'x' && finished == 0);
+
+    printf("Simulation has completed.");
 
     return 0;
 }
 
 void simulate_field(struct field* field)
 {
+    field->iteration++;
     int amount = field->width * field->height;
     struct cell* newCells = new_cell_list(field);
     int i = 0;
@@ -141,13 +164,31 @@ void print_field(struct field* field)
     set_cursor(0, field->height + 2);
 };
 
-void print_info(struct field* field, int automatic)
+void print_info(struct field* field, int automatic, double iterations, int currentIteration, int finished)
 {
-    set_cursor(field->width + 2, 1);
-    if (automatic)
+    if (!finished)
     {
-        printf("Simulation is running in auto-mode, press any button to pause.");
+        if (automatic)
+        {
+            set_cursor(field->width + 2, 1);
+            printf("Simulation is running in auto-mode, press any button to pause.");
+            set_cursor(field->width + 2, 3);
+            printf("Current iterations per second: %lf", iterations);
+        }
+        else
+        {
+            set_cursor(field->width + 2, 1);
+            printf("Simulation is in manual mode, enter 'a' to return to auto-mode.");
+        }
     }
+    else
+    {
+        set_cursor(field->width + 2, 1);
+        printf("Simulation has reached a stable condition.");
+    }
+    set_cursor(field->width + 2, 5);
+    printf("Current iteration: %d", currentIteration);
+
     set_cursor(0, field->height + 2);
 }
 
@@ -277,6 +318,7 @@ struct field* new_field(int width, int height, char visual)
     struct field* f = malloc(sizeof(struct field));
     f->width = width;
     f->height = height;
+    f->iteration = 0;
     f->cells = new_cell_list(f);
 
     int x = 0, y = 0, i = 0, r = 0;
@@ -299,6 +341,49 @@ struct field* new_field(int width, int height, char visual)
 struct cell* new_cell_list(struct field* field)
 {
     return (struct cell*)malloc(sizeof(struct cell) * field->width * field->height);
+};
+
+struct field* copy_field(struct field* origin)
+{
+    char vis = origin->cells[0].visual;
+    struct field* newField = new_field(origin->width, origin->height, vis);
+    newField->cells = new_cell_list(newField);
+    int i = 0, amt = get_field_cell_count(newField);
+    for (i = 0; i < amt; i++)
+    {
+        struct cell newCell;
+        struct cell originCell = origin->cells[i];
+
+        newCell.position = originCell.position;
+        newCell.visual = originCell.visual;
+        newCell.state = originCell.state;
+
+        newField->cells[i] = newCell;
+    }
+    return newField;
+};
+
+int get_field_cell_count(struct field* field)
+{
+    return field->width * field->height;
+}
+
+int compare_fields(struct field* a, struct field* b)
+{
+    if (a->height != b->height || a->width != b->width)
+    {
+        return 0;
+    }
+
+    int i;
+    for (i = 0; i < a->height * a->width; i++)
+    {
+        if (a->cells[i].state != b->cells[i].state)
+        {
+            return 0;
+        }
+    }
+    return 1;
 };
 
 float safe_number_input(float min, float max)
