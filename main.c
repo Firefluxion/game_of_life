@@ -8,6 +8,7 @@
 #include <conio.h>
 
 #define NEIGHBORCOUNT 8
+#define BUFFERSIZE 40
 enum cellState
 {
     alive,
@@ -36,10 +37,12 @@ struct field
     int iteration;
 };
 
+int run_field(struct field* field);
 int wrap_around(int n, int min, int max);
 struct pos* new_pos(int, int);
 struct field* new_field(int, int, char);
 void print_field(struct field*);
+void print_field_win(struct field*);
 void print_info(struct field* field, int automatic, double iterations, int currentIteration, int finished);
 struct cell get_cell(struct field* field, int x, int y);
 struct pos* get_neighbor_positions(struct field* field, struct pos position);
@@ -63,11 +66,7 @@ const int NEIGHBOROFFSETS[2][NEIGHBORCOUNT] = {
 
 int main()
 {
-    double simulationsPerSecond = 3.0;
-    int automatic = 1, finished = 0;
     char c;
-    struct field* lastField;
-
     printf("Please enter the field's width: ");
     int w = safe_number_input(1, (float)INT_MAX);
     printf("Please enter the field's height: ");
@@ -77,13 +76,30 @@ int main()
     fflush(stdin);
 
     struct field* f = new_field(w, h, c);
+    run_field(f);
+
+    return 0;
+}
+
+int run_field(struct field* field)
+{
+    double simulationsPerSecond = 3.0;
+    int automatic = 1, finished = 0, i = 0;
+    char c;
+    struct field* buffer[BUFFERSIZE];
+
+    for (i = 0; i < BUFFERSIZE; i++)
+    {
+        buffer[i] = copy_field(field);
+    }
+
     c = 0;
     clear();
 
     do
     {
-        lastField = copy_field(f);
-        simulate_field(f);
+        buffer[field->iteration % BUFFERSIZE] = copy_field(field);
+        simulate_field(field);
 
         if (automatic)
         {
@@ -101,19 +117,23 @@ int main()
             if (c == 'a')
             {
                 automatic = 1;
-                c = ' ';
+                c = 0;
                 fflush(stdin);
             }
         }
 
-        if (compare_fields(lastField, f))
+        for (i = 0; i < BUFFERSIZE; i++)
         {
-            finished = 1;
-            clear();
+            if (compare_fields(buffer[i], field))
+            {
+                finished = 1;
+                clear();
+                field->iteration--;
+            }
         }
 
-        print_field(f);
-        print_info(f, automatic, simulationsPerSecond, f->iteration, finished);
+        print_field_win(field);
+        print_info(field, automatic, simulationsPerSecond, field->iteration, finished);
     }
     while (c != 'x' && finished == 0);
 
@@ -163,6 +183,47 @@ void print_field(struct field* field)
     }
     set_cursor(0, field->height + 2);
 };
+
+void print_field_win(struct field* field)
+{
+    struct cell c;
+
+    HANDLE stdOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    DWORD written = 0;
+    const char *message = "hello world";
+    if (stdOut != NULL && stdOut != INVALID_HANDLE_VALUE)
+    {
+
+    //    WriteConsoleA(stdOut, message, strlen(message), &written, NULL);
+    }
+
+    set_cursor(0, 0);
+    print_frame(field->width + 2, field->height + 2);
+    set_cursor(1, 1);
+    int x = 0, y = 0;
+    for (y = 0; y < field->height; y++)
+    {
+        for (x = 0; x < field->width; x++)
+        {
+            set_cursor(1 + x, 1 + y);
+            c = get_cell(field, x, y);
+            switch(c.state)
+            {
+            case alive:
+                message = &c.visual;
+                break;
+            case dead:
+                message = " ";
+                break;
+            default:
+                message = "X";
+                break;
+            }
+            WriteConsoleA(stdOut, message, strlen(message), &written, NULL);
+        }
+    }
+    set_cursor(0, field->height + 2);
+}
 
 void print_info(struct field* field, int automatic, double iterations, int currentIteration, int finished)
 {
