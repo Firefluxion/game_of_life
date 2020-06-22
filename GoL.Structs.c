@@ -1,6 +1,8 @@
 #include "GoL.Structs.h"
 
-
+/*
+    Returns the cell in a specified position in the field.
+*/
 struct cell get_cell(struct field* field, int x, int y)
 {
     struct cell c;
@@ -16,6 +18,9 @@ struct cell get_cell(struct field* field, int x, int y)
     return c;
 };
 
+/*
+    Returns the index of a cell in a specified position in the field.
+*/
 int get_cell_index(struct field* field, int x, int y)
 {
     struct cell cell;
@@ -31,6 +36,9 @@ int get_cell_index(struct field* field, int x, int y)
     return length;
 }
 
+/*
+    Returns the positions of the neighbor cells.
+*/
 struct pos* get_neighbor_positions(struct field* field, struct pos position)
 {
     struct pos* positions = (struct pos*)malloc(sizeof(struct pos) * NEIGHBORCOUNT);
@@ -44,6 +52,9 @@ struct pos* get_neighbor_positions(struct field* field, struct pos position)
     return positions;
 };
 
+/*
+    Returns the cells that are neighbors in the specified position.
+*/
 struct cell* get_neighbors(struct field* field, struct pos position)
 {
     struct pos* positions = get_neighbor_positions(field, position);
@@ -57,6 +68,9 @@ struct cell* get_neighbors(struct field* field, struct pos position)
     return cells;
 };
 
+/*
+    Returns a new position from specified coordinates.
+*/
 struct pos* new_pos(int x, int y)
 {
     struct pos* p = malloc(sizeof(struct pos));
@@ -65,6 +79,9 @@ struct pos* new_pos(int x, int y)
     return p;
 };
 
+/*
+    Initializes a new field with the specified parameters.
+*/
 struct field* new_field(int width, int height, char visual, int random)
 {
     srand(time(0));
@@ -93,11 +110,17 @@ struct field* new_field(int width, int height, char visual, int random)
     return f;
 };
 
+/*
+    Returns a new cell list for the specified field.
+*/
 struct cell* new_cell_list(struct field* field)
 {
     return (struct cell*)malloc(sizeof(struct cell) * field->width * field->height);
 };
 
+/*
+    makes a copy of a field (allocates new memory)
+*/
 struct field* copy_field(struct field* origin)
 {
     char vis = origin->cells[0].visual;
@@ -118,11 +141,17 @@ struct field* copy_field(struct field* origin)
     return newField;
 };
 
+/*
+    Returns the amount of cells that are in the specified field.
+*/
 int get_field_cell_count(struct field* field)
 {
     return field->width * field->height;
 }
 
+/*
+    Returns 1 if the two fields are equal.
+*/
 int compare_fields(struct field* a, struct field* b)
 {
     if (a->height != b->height || a->width != b->width)
