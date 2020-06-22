@@ -1,1 +1,2 @@
-game_of_life
+Game of Life
+Implementation by Alexander Thielker, Robin Gerwe and Markus Möhlenkamp
