@@ -1,18 +1,13 @@
-#include <stdio.h>
-#include <stdlib.h>
+#ifndef GOL_RUNTIME_H_INCLUDED
+#define GOL_RUNTIME_H_INCLUDED
 
 #include <time.h>
 #include <windows.h>
-#include <limits.h>
 #include <unistd.h>
 #include <conio.h>
 
-#include "GoL.Structs.h"
-#include "GoL.Constants.h"
-#include "GoL.IO.h"
 
-#ifndef GOL_RUNTIME_H_INCLUDED
-#define GOL_RUNTIME_H_INCLUDED
+#include "GoL.IO.h"
 
 extern int dead_min; //Minimum required alive neighbors for a cell to die
 extern int dead_max; //Maximum allowed alive neighbors for a cell to stay alive

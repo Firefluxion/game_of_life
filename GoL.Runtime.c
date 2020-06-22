@@ -1,15 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-
-#include <time.h>
-#include <windows.h>
-#include <limits.h>
-#include <unistd.h>
-#include <conio.h>
-
-#include "GoL.Structs.h"
-#include "GoL.Constants.h"
-#include "GoL.IO.h"
 #include "GoL.Runtime.h"
 
 int dead_min = 2;
@@ -258,7 +246,7 @@ void print_info(struct field* field, int automatic, double iterations, int curre
     }
     else
     {
-        set_cursor(field->width + xDistanceFromField, 1);
+        set_cursor(field->width + xDistanceFromField, 0);
         printf("Simulation has reached a stable condition.");
     }
     set_cursor(field->width + xDistanceFromField, 1);

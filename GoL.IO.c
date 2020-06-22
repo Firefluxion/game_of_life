@@ -1,14 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-
-#include <time.h>
-#include <windows.h>
-#include <limits.h>
-#include <unistd.h>
-#include <conio.h>
-
-#include "GoL.Constants.h"
-#include "GoL.Structs.h"
 #include "GoL.IO.h"
 
 void write_field_to_file(struct field* field, char filePath[])
