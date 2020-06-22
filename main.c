@@ -13,6 +13,7 @@
 
 /*
     This is the starting point for the game of live program.
+    This is an example of the default implementation.
 */
 int main()
 {

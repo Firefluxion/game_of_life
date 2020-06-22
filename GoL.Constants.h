@@ -7,9 +7,14 @@
 #define NEIGHBORCOUNT 8
 #define BUFFERSIZE 40
 
-
+/*
+    Defines the relative coordinates for a given position.
+*/
 extern const int NEIGHBOROFFSETS[2][NEIGHBORCOUNT];
 
+/*
+    Defines the visual default representation usually for the cell.
+*/
 extern const char DEFAULTVISUAL;
 
 #endif

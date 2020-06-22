@@ -18,6 +18,7 @@ void write_field_to_file(struct field* field, char filePath[])
 {
     FILE *file;
     file = fopen(filePath, "w");
+
     int x = 0, y = 0;
     for (y = 0; y < field->height; y++)
     {
@@ -37,8 +38,10 @@ void write_field_to_file(struct field* field, char filePath[])
                 break;
             }
         }
+
         fprintf(file, "\n");
     }
+
     fclose(file);
 }
 
@@ -60,6 +63,7 @@ struct field* read_field_from_file(char filePath[])
     // initialize the field with the measures we got
     struct field* f = new_field(w, h, vis, 0);
 
+    // Fill each cell in the list with the state that is written in the file.
     int i = 0, filePos = 0;
     for(i = 0, filePos = 0; i < get_field_cell_count(f); i++, filePos++)
     {
@@ -143,7 +147,6 @@ char get_file_visual(FILE* file)
 {
     rewind(file);
     char ch = 0;
-
     while (fscanf(file, "%c", &ch) != EOF)
     {
         if (ch != ' ' && ch != '\n')
