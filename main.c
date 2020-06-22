@@ -3,7 +3,7 @@
     The "Game of Life"
     Original concept by John Horton Conway
 
-    Authors: Alexander Thielker & Robin Gerwe
+    Authors: Alexander Thielker & Robin Gerwe & Markus Möhlenkamp
     Date: 22.06.2020
 
     The Game of Life is a cellular automaton. It is a "zero-player game", and is made out of a potentially
@@ -38,23 +38,3 @@ int main()
     run_field(f);
     return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
