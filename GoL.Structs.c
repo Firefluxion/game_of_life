@@ -1,15 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-
-#include <time.h>
-#include <windows.h>
-#include <limits.h>
-#include <unistd.h>
-#include <conio.h>
-
 #include "GoL.Structs.h"
-#include "GoL.Constants.h"
-#include "GoL.Runtime.h"
 
 
 struct cell get_cell(struct field* field, int x, int y)
