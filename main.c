@@ -1,15 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-
-#include <time.h>
-#include <windows.h>
-#include <limits.h>
-#include <unistd.h>
-#include <conio.h>
-#include "GoL.Structs.h"
-#include "GoL.IO.h"
-#include "GoL.Runtime.h"
-
+#include "GoL.h"
 
 /*
     This is the starting point for the game of live program.
@@ -17,7 +6,6 @@
 */
 int main()
 {
-    char c;
     printf("Please enter the field's width: ");
     int w = safe_number_input(1, (double)INT_MAX);
 
@@ -25,6 +13,7 @@ int main()
     int h = safe_number_input(1, (double)INT_MAX);
 
     printf("Please a symbol for the field to use: ");
+    char c = 0;
     scanf("%c", &c);
     fflush(stdin);
 

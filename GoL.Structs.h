@@ -1,12 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-
-#include <time.h>
-#include <windows.h>
-#include <limits.h>
-#include <unistd.h>
-#include <conio.h>
-
 #ifndef GOL_STRUCTS_H_INCLUDED
 #define GOL_STRUCTS_H_INCLUDED
 
@@ -94,11 +85,12 @@ int get_field_cell_count(struct field* field);
     Compares two field and returns 1 if they are equal and 0 if they are no equal.
 */
 int compare_fields(struct field* a, struct field* b);
-
 /*
     Returns the amount of cells in the position of the specified field.
 */
 int get_cell_index(struct field* field, int x, int y);
 
+#include "GoL.Constants.h"
+#include "GoL.Runtime.h"
 
 #endif // GOL_STRUCTS_H_INCLUDED
