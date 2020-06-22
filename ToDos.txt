@@ -1,19 +1,1 @@
-- Kommentieren (in Englisch)
-- Steuerung der Iterationen (einzeln, Geschwindigkeit ändern)
-- Speichern und Einlesen von Zuständen in/aus einer Datei
-- Endzustand erkennen
-- Spielfeldgröße ändern
-- Einstellbarkeit des Regelsatzes
-- Design (Einstellbare Farbe/Symbole)
-- Benutzereingaben abfangen
-- Dialog/Einleitung (Shortcuts L/R/U/D)
-- Anzeige
-  -Iterationen pro Sekunde
-  -Lebende Zellen
-  -Iteration
-  -Simulationslänge
 
-- Zellen manuel hinzufügen/entfernen
-- Backtracking der letzen X(einstellbar) Iterationen
-
--Zellenlogik auf 2d Array umstellen
