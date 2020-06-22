@@ -16,6 +16,7 @@ extern int alive_min; //Minimum required alive neighbors for a cell to revive
 extern int alive_max; //Maximum allowed alive neighbors for a cell to stay alive
 
 void print_field(struct field*); // prints field data (including frame)
+void clear_under_field(struct field* field); // clear the area under the field
 void print_field_win(struct field*); // prints field data (including frame) utilizing windows API functions (currently unused)
 void print_info(struct field* field, int automatic, double iterations, int currentIteration, int finished); //Prints field infos and controls
 int run_field(struct field* field); //Starts a simulation and guides the user through it

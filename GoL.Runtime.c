@@ -14,6 +14,7 @@ int run_field(struct field* field)
 {
     double simulationsPerSecond = 3.0;
     int automatic = 1, finished = 0, i = 0;
+    char name[SAVEBUFFER];
     char c = 0;
 
     //Buffer keeps track of the last n iterations, also compares them to the current one to
@@ -62,23 +63,37 @@ int run_field(struct field* field)
 
                 // 's' saves the current iteration to a file
             case 's':
-                write_field_to_file(field, "Test.txt");
+                printf("Please enter a name for the save.\n");
+                scanf("%s", name);
+                write_field_to_file(field, name);
                 printf("File saved.\n");
                 continue;
 
                 // 'r' reads a saved simulation
             case 'r':
-                field = read_field_from_file("Test.txt");
-                //The buffer is filled with an empty field to make sure the simulation doesn't stop due to a wrong stable condition
-                struct field* empty = new_field(field->width, field->height, ' ', 0);
-                for (i = 0; i < BUFFERSIZE; i++)
+                printf("Please enter the name of the file you want to read.\n");
+                scanf("%s", name);
+                // access code from StackOverflow user 'Graeme Perrow' (https://stackoverflow.com/questions/230062/whats-the-best-way-to-check-if-a-file-exists-in-c)
+                if( access( name, F_OK ) != -1 )
                 {
-                    buffer[i] = copy_field(empty);
-                }
-                clear();
+                    field = read_field_from_file(name);
 
-                print_field(field);
-                print_info(field, automatic, simulationsPerSecond, field->iteration, finished);
+                    //The buffer is filled with an empty field to make sure the simulation doesn't stop due to a wrong stable condition
+                    struct field* empty = new_field(field->width, field->height, ' ', 0);
+                    for (i = 0; i < BUFFERSIZE; i++)
+                    {
+                        buffer[i] = copy_field(empty);
+                    }
+                    clear();
+
+                    print_field(field);
+                    clear_under_field(field);
+                    print_info(field, automatic, simulationsPerSecond, field->iteration, finished);
+                }
+                else
+                {
+                    printf("File does not exist.");
+                }
                 continue;
 
                 // 'o' gives the user some inputs for the ruleset
@@ -111,6 +126,7 @@ int run_field(struct field* field)
         }
 
         print_field(field);
+        clear_under_field(field);
         print_info(field, automatic, simulationsPerSecond, field->iteration, finished);
     }
     // 'x' exits the simulation.
@@ -166,9 +182,24 @@ void print_field(struct field* field)
             }
         }
     }
-    set_cursor(0, field->height + 2);
+    set_cursor(0, MAX(field->height + 2, 13));
 };
 
+/*
+    clears the area under the displayed field
+*/
+void clear_under_field(struct field* field)
+{
+    int y = 0, i = 0;
+    for(y = MAX(field->height + 2, 13); y < field->height + 5; y++)
+    {
+        set_cursor(0, y);
+        for(i = 0; i < (y > 13 ? 100 : field->width); i++)
+        {
+            printf(" ");
+        }
+    }
+}
 
 /*
     Prints the field data utilizing the windows API, currently unused due to problems with small field sizes (e.g. (7, 7))

@@ -1,0 +1,39 @@
+# depslib dependency file v1.0
+1592839092 source:c:\users\alex\desktop\game_of_life-master\gol.constants.c
+	"GoL.Constants.h"
+
+1592848715 c:\users\alex\desktop\game_of_life-master\gol.constants.h
+	<stdio.h>
+
+1592839092 source:c:\users\alex\desktop\game_of_life-master\gol.io.c
+	"GoL.IO.h"
+
+1592839092 c:\users\alex\desktop\game_of_life-master\gol.io.h
+	"GoL.Structs.h"
+
+1592839092 c:\users\alex\desktop\game_of_life-master\gol.structs.h
+	"GoL.Constants.h"
+	"GoL.Runtime.h"
+
+1592849294 c:\users\alex\desktop\game_of_life-master\gol.runtime.h
+	<time.h>
+	<windows.h>
+	<unistd.h>
+	<conio.h>
+	"GoL.IO.h"
+
+1592839092 source:c:\users\alex\desktop\game_of_life-master\gol.structs.c
+	"GoL.Structs.h"
+
+1592839092 source:c:\users\alex\desktop\game_of_life-master\main.c
+	"GoL.h"
+
+1592839092 c:\users\alex\desktop\game_of_life-master\gol.h
+	"GoL.Structs.h"
+	"GoL.Constants.h"
+	"GoL.Runtime.h"
+	"GoL.IO.h"
+
+1592849736 source:c:\users\alex\desktop\game_of_life-master\gol.runtime.c
+	"GoL.Runtime.h"
+
