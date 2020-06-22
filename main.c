@@ -57,12 +57,18 @@ int set_cursor(int x, int y);
 void print_frame(int, int);
 float safe_number_input(float min, float max);
 void clear();
+void write_field_to_file(struct field* field, char filePath[]);
+struct field* read_field_from_file(char filePath[]);
+int get_width(char filePath[]);
+int get_height(char filePath[]);
 
 
 const int NEIGHBOROFFSETS[2][NEIGHBORCOUNT] = {
     { 1, 1, 0,-1,  -1, -1,  0,  1},
     { 0, 1, 1, 1,   0, -1, -1, -1}
 };
+
+const char DEFAULT_VISUAL = 'X';
 
 int main()
 {
@@ -76,8 +82,8 @@ int main()
     fflush(stdin);
 
     struct field* f = new_field(w, h, c);
-    run_field(f);
 
+    run_field(f);
     return 0;
 }
 
@@ -134,10 +140,12 @@ int run_field(struct field* field)
 
         print_field_win(field);
         print_info(field, automatic, simulationsPerSecond, field->iteration, finished);
+            c = getch();
     }
     while (c != 'x' && finished == 0);
 
     printf("Simulation has completed.");
+    printf("Simulation has been saved to Test.txt.");
 
     return 0;
 }
@@ -498,4 +506,129 @@ void clear(){
     #if defined(_WIN32) || defined(_WIN64)
         system("cls");
     #endif
+}
+
+void write_field_to_file(struct field* field, char filePath[])
+{
+    FILE *datendatei;
+    datendatei = fopen(filePath, "w");
+    int x = 0, y = 0;
+    for (y = 0; y < field->height; y++)
+    {
+        fprintf(datendatei, "\n");
+        for (x = 0; x < field->width; x++)
+        {
+            struct cell c = get_cell(field, x, y);
+            switch(c.state)
+            {
+            case alive:
+                fprintf(datendatei, "%c", c.visual);
+                break;
+            case dead:
+                fprintf(datendatei, " ");
+                break;
+            default:
+                fprintf(datendatei, "X");
+                break;
+            }
+        }
+    }
+}
+
+struct field* read_field_from_file(char filePath[])
+{
+    int w = 0;
+    int h = 0;
+
+    w = get_width(filePath);
+    h = get_height(filePath);
+    char vis = DEFAULT_VISUAL;
+
+    printf("w = %d, ", w);
+    printf("h = %d", h);
+
+    FILE *datendatei;
+    datendatei = fopen(filePath, "r");
+
+    // initialize the field with the measures we got
+    struct field* f = new_field(w, h, vis);
+
+    int i = 0;
+    int x = 0, y = 0;
+    for(i = 0; i < f->height * f->height; i++)
+    {
+        char c = 'l';
+        struct cell cl = get_cell(f, x, y);
+        struct cell* cellp = &cl;
+        fscanf(datendatei, "%c", &c);
+        switch(c)
+        {
+            case '/n':
+                y++;
+                x = 0;
+                printf("n\n");
+                break;
+            case ' ':
+                cl.state = dead;
+                cellp->visual = c;
+                x++;
+                printf("%c", c);
+                break;
+            default:
+                cl.state = alive;
+                cellp->visual = c;
+                x++;
+                printf("%c", c);
+                break;
+        }
+    }
+
+    return f;
+}
+
+int get_width(char filePath[])
+{
+    FILE *datendatei;
+    datendatei = fopen(filePath, "r");
+
+    char etc = ' ';
+    int counter = 0;
+    int max = 0;
+    while (fscanf(datendatei, "%c", &etc) != EOF)
+    {
+        if(etc == '\n')
+        {
+            counter = 0;
+        }
+        else
+        {
+            counter++;
+        }
+
+        if(counter > max)
+        {
+            max = counter;
+        }
+    }
+
+    return max;
+}
+
+int get_height(char filePath[])
+{
+    FILE *datendatei;
+    datendatei = fopen(filePath, "r");
+
+    //We need start at one;
+    int counter = 1;
+    char etc = 0;
+    while (fscanf(datendatei, "%c", &etc) != EOF)
+    {
+        if(etc == '\n')
+        {
+            counter++;
+        }
+    }
+
+    return counter;
 }
